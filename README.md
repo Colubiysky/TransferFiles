@@ -1,5 +1,7 @@
 # Readme
 
+https://img.shields.io/github/workflow/status/Colubiysky/TransferFiles/.NET%20Core
+
 ## Requirements
 .NET Core 3.1
 

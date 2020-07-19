@@ -15,8 +15,8 @@ namespace TransferFiles
         IPAddress LocalIP;
         Main m;
 
-        private bool Finished = false;
         public bool IsFinished { get => Finished; }
+        private bool Finished = false;
 
         public Pinger(Main main)
         {

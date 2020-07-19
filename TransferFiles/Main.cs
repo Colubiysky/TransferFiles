@@ -21,10 +21,6 @@ namespace TransferFiles
             InitializeComponent();
         }
 
-        string DefaultGates = "";
-        string LocalIp = "";
-        int count = 0;
-
         public string PingReply { get => PingRes; set => PingRes = value; }
         private string PingRes = "";
 
@@ -46,9 +42,7 @@ namespace TransferFiles
 
         private  void SetTimer()
         {
-            // Create a timer with a two second interval.
             aTimer = new System.Timers.Timer(100);
-            // Hook up the Elapsed event for the timer. 
             aTimer.Elapsed += OnTimedEvent;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;

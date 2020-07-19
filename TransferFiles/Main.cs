@@ -21,23 +21,22 @@ namespace TransferFiles
             InitializeComponent();
         }
 
-        public string PingReply { get => PingRes; set => PingRes = value; }
-        private string PingRes = "";
+        private List<string> Online;
 
-        private static System.Timers.Timer aTimer;
+        private System.Timers.Timer aTimer;
         Pinger p;
+
+        System.Diagnostics.Stopwatch sw = new Stopwatch();
 
         private void button2_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            p = new Pinger(this);
+            p = new Pinger();
+            lst_Computers.Items.Clear();
+            sw.Restart();
+            if (Online != null) 
+                Online.Clear();
             p.DoPing();
-            SetTimer();
-
-            sw.Stop();
-            MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
+            SetTimer();            
         }
 
         private  void SetTimer()
@@ -50,7 +49,21 @@ namespace TransferFiles
 
         private  void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            Invoke(new System.Action(()=> textBox1.Text = PingRes));
+            Online = p.Online;
+
+            if (p.IsFinished)
+            {
+
+                Invoke(new System.Action(() =>
+                {
+                    foreach (var address in Online)
+                        lst_Computers.Items.Add(address);
+                }));
+
+                sw.Stop();
+                aTimer.Stop();
+                MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
+            }
         }
     }
 }

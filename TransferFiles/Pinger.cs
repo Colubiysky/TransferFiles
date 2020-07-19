@@ -5,7 +5,10 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Timers;
+using System.Net.Http.Headers;
 
 namespace TransferFiles
 {
@@ -13,19 +16,31 @@ namespace TransferFiles
     {
         IPAddress DefaultGates;
         IPAddress LocalIP;
-        Main m;
 
         public bool IsFinished { get => Finished; }
         private bool Finished = false;
 
-        public Pinger(Main main)
+        public List<string> Online { get => Online_; }
+        private List<string> Online_ = new List<string>();
+
+        int Alive_ = 0;
+        int Dead_ = 0;
+
+        int countIPs_ = 0;
+        int pinged_ = 0;
+
+
+        private System.Timers.Timer aTimer;
+
+        public Pinger()
         {
-            m = main;
+            //m = main;
             DefaultGates = GetDefaultGateway();
             LocalIP = IPAddress.Parse(GetLocalIP());
+            SetTimer();
         }
 
-        private IPAddress GetDefaultGateway()
+        private  IPAddress GetDefaultGateway()
         {
             return NetworkInterface
                .GetAllNetworkInterfaces()
@@ -38,7 +53,7 @@ namespace TransferFiles
                .FirstOrDefault();
         }
 
-        private string GetLocalIP()
+        private  string GetLocalIP()
         {
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();
             foreach (var item in interfaces)
@@ -69,47 +84,66 @@ namespace TransferFiles
             return null;
         }
 
-        public void DoPing()
+        public  void DoPing()
         {
             var IPList = CreateIPList();
+            countIPs_ = IPList.Count;
+
             string data = "1";
             byte[] buffer = Encoding.ASCII.GetBytes(data);
             PingOptions options = new PingOptions(64, true);
 
             for (int i =0; i < IPList.Count; i++)
             {
-                if (i != IPList.Count)
+                if (i != IPList.Count - 1)
                     Threads(IPList[i], buffer, options, false);
                 else
                     Threads(IPList[i], buffer, options, true);
             }
         }
 
-        private void Threads(IPAddress dest, byte[] buffer, PingOptions opt, bool last)
+        private void SetTimer()
+        {
+            aTimer = new System.Timers.Timer(10);
+            aTimer.Elapsed += OnTimedEvent;
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
+        }
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            if (Alive_ == Dead_ && pinged_== countIPs_)
+            {
+                Finished = true;
+                aTimer.Stop();
+            }
+        }
+
+        private  void Threads(IPAddress dest, byte[] buffer, PingOptions opt, bool last)
         {
             Ping ping = new Ping();
             PingReply pingReply;
             Thread t = new Thread(new ThreadStart(() =>
             {
                 pingReply = ping.Send(dest, 100, buffer, opt);
+                if(pingReply.Status != IPStatus.Unknown)
+                    pinged_++;
 
                 if (pingReply.Status.ToString() == "Success")
-                    m.PingReply += pingReply.Address.ToString() + " "
-                                + pingReply.Status + " " 
-                                + Encoding.UTF8.GetString(pingReply.Buffer) + " " 
-                                + pingReply.Options.Ttl
-                                + "\r\n";
+                    Online_.Add(pingReply.Address.ToString());
+
+                if (last && (pingReply.Status == IPStatus.Success || pingReply.Status != IPStatus.Success))
+                    Finished = true;
+
+                Dead_++;
             }));
 
             t.IsBackground = true;
             t.Start();
-
-            if(last)
-                Finished = true;
+            Alive_++;
         }
 
-
-        private List<IPAddress> CreateIPList()
+        private  List<IPAddress> CreateIPList()
         {
             List<IPAddress> IPList = new List<IPAddress>();
             int[] localAndDefaultIPs = NotIncludedIndeces();
@@ -121,7 +155,7 @@ namespace TransferFiles
             return IPList;
         }
 
-        private int[] NotIncludedIndeces()
+        private  int[] NotIncludedIndeces()
         {
             int[] res = new int[2];
             int count = 0;

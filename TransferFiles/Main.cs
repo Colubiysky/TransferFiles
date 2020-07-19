@@ -19,6 +19,7 @@ namespace TransferFiles
         public Main()
         {
             InitializeComponent();
+            GetOnline();
         }
 
         private List<string> Online;
@@ -28,18 +29,25 @@ namespace TransferFiles
 
         System.Diagnostics.Stopwatch sw = new Stopwatch();
 
+        bool firstTime = false;
+
         private void button2_Click(object sender, EventArgs e)
+        {
+            GetOnline();
+        }
+
+        private void GetOnline() //Fills listbox addresses of online devices
         {
             p = new Pinger();
             lst_Computers.Items.Clear();
             sw.Restart();
-            if (Online != null) 
+            if (Online != null)
                 Online.Clear();
             p.DoPing();
-            SetTimer();            
+            SetTimer();
         }
 
-        private  void SetTimer()
+        private  void SetTimer() //for pereodical checking of online list
         {
             aTimer = new System.Timers.Timer(100);
             aTimer.Elapsed += OnTimedEvent;
@@ -51,18 +59,22 @@ namespace TransferFiles
         {
             Online = p.Online;
 
-            if (p.IsFinished)
+            if (p.IsFinished) //If all threads finished, it will fill listbox with addresses
             {
 
                 Invoke(new System.Action(() =>
                 {
-                    foreach (var address in Online)
-                        lst_Computers.Items.Add(address);
+                    lst_Computers.Items.Clear();
+                    lst_Computers.Items.AddRange(Online.ToArray());
                 }));
 
                 sw.Stop();
-                aTimer.Stop();
-                MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
+                if (!firstTime) //after first update, it will reduce interval of timer updates
+                {
+                    firstTime = true;
+                    MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
+                    aTimer.Interval = 1000000;
+                }
             }
         }
     }

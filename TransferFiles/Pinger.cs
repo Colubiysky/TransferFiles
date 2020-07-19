@@ -12,29 +12,28 @@ using System.Net.Http.Headers;
 
 namespace TransferFiles
 {
-    class Pinger
+    class Pinger //IT will checks who is online in local network
     {
-        IPAddress DefaultGates;
-        IPAddress LocalIP;
+        IPAddress DefaultGates; //Default gateway
+        IPAddress LocalIP; //IP address of computer in local network
 
-        public bool IsFinished { get => Finished; }
+        public bool IsFinished { get => Finished; } //bool that means that all threads finished
         private bool Finished = false;
 
-        public List<string> Online { get => Online_; }
+        public List<string> Online { get => Online_; } //This list contains ip addresses of online devices in network
         private List<string> Online_ = new List<string>();
 
-        int Alive_ = 0;
-        int Dead_ = 0;
+        int Alive_ = 0; //alive threads
+        int Dead_ = 0;  //finished threads
 
-        int countIPs_ = 0;
-        int pinged_ = 0;
+        int countIPs_ = 0; //all ip addresses variants, except local and default gateway
+        int pinged_ = 0;   //count of pinged ips
 
 
         private System.Timers.Timer aTimer;
 
         public Pinger()
         {
-            //m = main;
             DefaultGates = GetDefaultGateway();
             LocalIP = IPAddress.Parse(GetLocalIP());
             SetTimer();
@@ -46,7 +45,8 @@ namespace TransferFiles
                .GetAllNetworkInterfaces()
                .Where(n => n.OperationalStatus == OperationalStatus.Up)
                .Where(n => n.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-               .Where(n => (n.Name != "Radmin VPN") && (n.Name != "Hamachi"))
+               .Where(n => (n.Name != "Radmin VPN") && (n.Name != "Hamachi")) //except fucking radmin and hamachi, they are breaking getting 
+                                                                              // default gateway, because these shit has their own gateways
                .SelectMany(n => n.GetIPProperties()?.GatewayAddresses)
                .Select(g => g?.Address)
                .Where(a => a != null)
@@ -60,7 +60,7 @@ namespace TransferFiles
             {
                 if (item.OperationalStatus == OperationalStatus.Up &&
                     item.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
-                    item.Name != "Radmin VPN" && item.Name != "Hamachi")
+                    item.Name != "Radmin VPN" && item.Name != "Hamachi") //same love for radmin and hamachi
                 {
                     var GatewayAddresses = item.GetIPProperties().GatewayAddresses;
 
@@ -89,14 +89,15 @@ namespace TransferFiles
             var IPList = CreateIPList();
             countIPs_ = IPList.Count;
 
+            //Configurate ping
             string data = "1";
             byte[] buffer = Encoding.ASCII.GetBytes(data);
             PingOptions options = new PingOptions(64, true);
 
-            for (int i =0; i < IPList.Count; i++)
+            for (int i =0; i < IPList.Count; i++) //every address will be pinged with different thread
             {
                 if (i != IPList.Count - 1)
-                    Threads(IPList[i], buffer, options, false);
+                    Threads(IPList[i], buffer, options, false); 
                 else
                     Threads(IPList[i], buffer, options, true);
             }
@@ -125,15 +126,15 @@ namespace TransferFiles
             PingReply pingReply;
             Thread t = new Thread(new ThreadStart(() =>
             {
-                pingReply = ping.Send(dest, 100, buffer, opt);
-                if(pingReply.Status != IPStatus.Unknown)
+                ping.Send(dest, 100, buffer, opt); //knock knock 
+                ping.Send(dest, 100, buffer, opt); //knock knock
+                ping.Send(dest, 100, buffer, opt); //knock knock
+                pingReply = ping.Send(dest, 100, buffer, opt); //knock knock is someone here?
+                if (pingReply.Status != IPStatus.Unknown) //if we don't lost ping packet
                     pinged_++;
 
                 if (pingReply.Status.ToString() == "Success")
                     Online_.Add(pingReply.Address.ToString());
-
-                if (last && (pingReply.Status == IPStatus.Success || pingReply.Status != IPStatus.Success))
-                    Finished = true;
 
                 Dead_++;
             }));
@@ -143,7 +144,7 @@ namespace TransferFiles
             Alive_++;
         }
 
-        private  List<IPAddress> CreateIPList()
+        private  List<IPAddress> CreateIPList() //it creates list with ip addresses
         {
             List<IPAddress> IPList = new List<IPAddress>();
             int[] localAndDefaultIPs = NotIncludedIndeces();
@@ -155,7 +156,7 @@ namespace TransferFiles
             return IPList;
         }
 
-        private  int[] NotIncludedIndeces()
+        private  int[] NotIncludedIndeces() //except local and default gateway addresses
         {
             int[] res = new int[2];
             int count = 0;

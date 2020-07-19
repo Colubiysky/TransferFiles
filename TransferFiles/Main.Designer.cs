@@ -30,7 +30,6 @@
         {
             this.lst_Computers = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -49,21 +48,13 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(15, 19);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(201, 20);
+            this.label1.Size = new System.Drawing.Size(105, 20);
             this.label1.TabIndex = 1;
-            this.label1.Text = "List of computers on network";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(366, 43);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(454, 738);
-            this.textBox1.TabIndex = 2;
+            this.label1.Text = "Online devices";
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(845, 43);
+            this.button2.Location = new System.Drawing.Point(326, 43);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(176, 81);
             this.button2.TabIndex = 4;
@@ -75,15 +66,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1230, 793);
+            this.ClientSize = new System.Drawing.Size(722, 509);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lst_Computers);
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Main";
-            this.Text = "Form1";
+            this.Text = "Main";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -93,7 +83,6 @@
 
         private System.Windows.Forms.ListBox lst_Computers;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button2;
     }
 }

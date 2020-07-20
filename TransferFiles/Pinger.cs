@@ -5,18 +5,12 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Timers;
-using System.Net.Http.Headers;
 
 namespace TransferFiles
 {
     class Pinger //IT will checks who is online in local network
     {
-        IPAddress DefaultGates; //Default gateway
-        IPAddress LocalIP; //IP address of computer in local network
-
         public bool IsFinished { get => Finished; } //bool that means that all threads finished
         private bool Finished = false;
 
@@ -34,8 +28,8 @@ namespace TransferFiles
 
         public Pinger()
         {
-            DefaultGates = GetDefaultGateway();
-            LocalIP = IPAddress.Parse(GetLocalIP());
+            ThisMachine.DefaultGateway = GetDefaultGateway();
+            ThisMachine.LocalIP = IPAddress.Parse(GetLocalIP());
             SetTimer();
         }
 
@@ -66,7 +60,7 @@ namespace TransferFiles
 
                     foreach (var address in GatewayAddresses)
                     {
-                        if (address.Address.ToString() == DefaultGates.ToString())
+                        if (address.Address.ToString() == ThisMachine.DefaultGateway.ToString())
                         {
                             var IpProperties = item.GetIPProperties();
                             var UnicastAddresses = IpProperties.UnicastAddresses;
@@ -84,7 +78,7 @@ namespace TransferFiles
             return null;
         }
 
-        public  void DoPing()
+        virtual public void DoPing()
         {
             var IPList = CreateIPList();
             countIPs_ = IPList.Count;
@@ -151,7 +145,7 @@ namespace TransferFiles
 
             for (int i = 1; i < 256; i++)
                 if (i != localAndDefaultIPs[0] && i != localAndDefaultIPs[1])
-                    IPList.Add(IPAddress.Parse(DefaultGates.ToString().Replace(".0.1", ".0." + i.ToString())));
+                    IPList.Add(IPAddress.Parse(ThisMachine.DefaultGateway.ToString().Replace(".0.1", ".0." + i.ToString())));
 
             return IPList;
         }
@@ -161,12 +155,12 @@ namespace TransferFiles
             int[] res = new int[2];
             int count = 0;
             string temp = string.Empty;
-            for(int i =0; i < DefaultGates.ToString().Length; i++)
+            for(int i =0; i < ThisMachine.DefaultGateway.ToString().Length; i++)
             {
                 if (count == 3)
-                    temp += DefaultGates.ToString()[i];
+                    temp += ThisMachine.DefaultGateway.ToString()[i];
 
-                if (DefaultGates.ToString()[i] == '.')
+                if (ThisMachine.DefaultGateway.ToString()[i] == '.')
                     count++;
             }
 
@@ -174,12 +168,12 @@ namespace TransferFiles
             temp = string.Empty;
             count = 0;
 
-            for (int i = 0; i < LocalIP.ToString().Length; i++)
+            for (int i = 0; i < ThisMachine.LocalIP.ToString().Length; i++)
             {
                 if (count == 3)
-                    temp += LocalIP.ToString()[i];
+                    temp += ThisMachine.LocalIP.ToString()[i];
 
-                if (LocalIP.ToString()[i] == '.')
+                if (ThisMachine.LocalIP.ToString()[i] == '.')
                     count++;
             }
 

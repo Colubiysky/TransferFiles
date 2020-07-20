@@ -73,7 +73,8 @@ namespace TransferFiles
                 {
                     firstTime = true;
                     MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
-                    aTimer.Interval = 1000000;
+                    aTimer.Stop();
+                    //aTimer.Interval = 1000000;
                 }
             }
         }

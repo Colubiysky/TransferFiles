@@ -15,7 +15,7 @@ namespace Server
 
         string EndpointFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\";
 
-        void Run()
+        public void Run()
         {
             IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
 

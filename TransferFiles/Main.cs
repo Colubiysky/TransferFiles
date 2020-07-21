@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Timers;
 using Client;
+using Server;
 
 namespace TransferFiles
 {
@@ -21,7 +22,12 @@ namespace TransferFiles
         {
             InitializeComponent();
             GetOnline();
+            server = new Server.Server();
+            server.Run();
         }
+
+        Server.Server server;
+        Client.Client client;
 
         private List<string> Online;
 
@@ -32,7 +38,7 @@ namespace TransferFiles
 
         bool firstTime = false;
 
-        private void button2_Click(object sender, EventArgs e)
+        private void CheckOnline_btn_Click(object sender, EventArgs e)
         {
             string EndpointFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\";
             GetOnline();
@@ -81,6 +87,11 @@ namespace TransferFiles
                     //aTimer.Interval = 1000000;
                 }
             }
+        }
+
+        private void DropFile_btn_Click(object sender, EventArgs e)
+        {
+            client.Main(lst_Computers.SelectedItem.ToString());
         }
     }
 }

@@ -30,8 +30,8 @@
         {
             this.lst_Computers = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.CheckOnline_btn = new System.Windows.Forms.Button();
+            this.DropFile_btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lst_Computers
@@ -53,32 +53,33 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Online devices";
             // 
-            // button2
+            // CheckOnline_btn
             // 
-            this.button2.Location = new System.Drawing.Point(326, 43);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(176, 81);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Check Online";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.CheckOnline_btn.Location = new System.Drawing.Point(326, 43);
+            this.CheckOnline_btn.Name = "CheckOnline_btn";
+            this.CheckOnline_btn.Size = new System.Drawing.Size(176, 81);
+            this.CheckOnline_btn.TabIndex = 4;
+            this.CheckOnline_btn.Text = "Check Online";
+            this.CheckOnline_btn.UseVisualStyleBackColor = true;
+            this.CheckOnline_btn.Click += new System.EventHandler(this.CheckOnline_btn_Click);
             // 
-            // button1
+            // DropFile_btn
             // 
-            this.button1.Location = new System.Drawing.Point(326, 131);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(176, 82);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Drop Test File";
-            this.button1.UseVisualStyleBackColor = true;
+            this.DropFile_btn.Location = new System.Drawing.Point(326, 131);
+            this.DropFile_btn.Name = "DropFile_btn";
+            this.DropFile_btn.Size = new System.Drawing.Size(176, 82);
+            this.DropFile_btn.TabIndex = 5;
+            this.DropFile_btn.Text = "Drop Test File";
+            this.DropFile_btn.UseVisualStyleBackColor = true;
+            this.DropFile_btn.Click += new System.EventHandler(this.DropFile_btn_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(952, 506);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.DropFile_btn);
+            this.Controls.Add(this.CheckOnline_btn);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lst_Computers);
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -94,8 +95,8 @@
 
         private System.Windows.Forms.ListBox lst_Computers;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button CheckOnline_btn;
+        private System.Windows.Forms.Button DropFile_btn;
     }
 }
 

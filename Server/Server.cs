@@ -49,6 +49,7 @@ namespace Server
                             bytes += received;
                         }
                         while (handler.Available > 0);
+
                         file = new NetFile.NetFile(memStream.ToArray());
                     }
                     Console.WriteLine("Size of received data: " + bytes.ToString() + " bytes");

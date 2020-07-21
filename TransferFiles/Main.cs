@@ -76,7 +76,7 @@ namespace TransferFiles
                 if (!firstTime) //after first update, it will reduce interval of timer updates
                 {
                     firstTime = true;
-                    MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
+                    //MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
                     aTimer.Stop();
                     //aTimer.Interval = 1000000;
                 }

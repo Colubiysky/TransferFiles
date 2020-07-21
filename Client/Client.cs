@@ -3,6 +3,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
+using NetFile;
 
 namespace Client
 {
@@ -15,42 +16,40 @@ namespace Client
 
         public string FilePath { get => filePath; set => filePath = value; }
         string filePath = String.Empty;
-        void Run()
+
+        void Main()
         {
             try
             {
-                IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse(address), port);
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8080);
 
                 Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                // подключаемся к удаленному хосту
-                socket.Connect(ipPoint);
-                Console.Write("Введите сообщение:");
-                string message = Console.ReadLine();
-                byte[] data = Encoding.Unicode.GetBytes(message);
-                socket.Send(data);
+                socket.Connect(endPoint);
+                Console.WriteLine("Client connected");
 
-                // получаем ответ
-                data = new byte[256]; // буфер для ответа
-                StringBuilder builder = new StringBuilder();
-                int bytes = 0; // количество полученных байт
-
-                do
+                Console.WriteLine("Sending file...");
+                using (FileStream stream = new FileStream(@"C:\Users\cola\Desktop\test.txt", FileMode.Open, FileAccess.Read))
                 {
-                    bytes = socket.Receive(data, data.Length, 0);
-                    builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
-                }
-                while (socket.Available > 0);
-                Console.WriteLine("ответ сервера: " + builder.ToString());
+                    byte[] data = new byte[stream.Length];
+                    int length = stream.Read(data, 0, data.Length);
+                    NetFile.NetFile file = new NetFile.NetFile();
+                    file.FileName = Path.GetFileName(stream.Name);
+                    file.Data = data;
 
-                // закрываем сокет
+                    byte[] to = file.ToArray();
+                    socket.Send(to);
+                }
+                Console.WriteLine("File sended");
+
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
+                Console.ReadKey();
             }
-            catch (Exception ex)
+            catch (Exception error)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(error.ToString());
+                Console.ReadKey();
             }
-            Console.Read();
         }
     }
 }

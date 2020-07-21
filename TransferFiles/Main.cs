@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Timers;
+using Client;
 
 namespace TransferFiles
 {
@@ -33,6 +34,7 @@ namespace TransferFiles
 
         private void button2_Click(object sender, EventArgs e)
         {
+            string EndpointFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\";
             GetOnline();
         }
 
@@ -41,8 +43,10 @@ namespace TransferFiles
             p = new Pinger();
             lst_Computers.Items.Clear();
             sw.Restart();
+
             if (Online != null)
                 Online.Clear();
+            
             p.DoPing();
             SetTimer();
         }

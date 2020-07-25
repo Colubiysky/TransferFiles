@@ -17,11 +17,11 @@ namespace Client
         public string FilePath { get => filePath; set => filePath = value; }
         string filePath = String.Empty;
 
-        public void Main(string endpoint)
+        public void Send(string endpoint)
         {
             try
             {
-                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(endpoint), 8080);
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(endpoint), 1337);
 
                 Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(endPoint);

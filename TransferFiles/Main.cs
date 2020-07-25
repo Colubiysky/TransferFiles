@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Timers;
-using Client;
 using Server;
+using System.Collections.Immutable;
 
 namespace TransferFiles
 {
@@ -27,7 +27,7 @@ namespace TransferFiles
         }
 
         Server.Server server;
-        Client.Client client;
+        Client client;
 
         private List<string> Online;
 
@@ -67,31 +67,48 @@ namespace TransferFiles
 
         private  void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            Online = p.Online;
-
-            if (p.IsFinished) //If all threads finished, it will fill listbox with addresses
+            try
             {
-
                 Invoke(new System.Action(() =>
                 {
+                    Online = p.Online;
+                    var idk = p.Pinged.ToArray();
+                    Array.Sort(idk);
+
+                    if (p.IsFinished) //If all threads finished, it will fill listbox with addresses
+                    {
+                        
+                        lst_Computers.Items.Clear();
+                        lst_Computers.Items.AddRange(Online.ToArray());
+                        sw.Stop();
+                        if (!firstTime) //after first update, it will reduce interval of timer updates
+                        {
+                            firstTime = true;
+                            //MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
+                            aTimer.Stop();
+                            //aTimer.Interval = 1000000;
+                        }
+                    }
+
+                    #if DEBUG
+                    
                     lst_Computers.Items.Clear();
                     lst_Computers.Items.AddRange(Online.ToArray());
+                    aTimer.Stop();
+                    
+                    #endif
                 }));
 
-                sw.Stop();
-                if (!firstTime) //after first update, it will reduce interval of timer updates
-                {
-                    firstTime = true;
-                    //MessageBox.Show((sw.ElapsedMilliseconds / 100.0).ToString());
-                    aTimer.Stop();
-                    //aTimer.Interval = 1000000;
-                }
+            }
+            catch(InvalidOperationException ex)
+            {
+                
             }
         }
 
         private void DropFile_btn_Click(object sender, EventArgs e)
         {
-            client.Main(lst_Computers.SelectedItem.ToString());
+            client.Send(lst_Computers.SelectedItem.ToString());
         }
     }
 }

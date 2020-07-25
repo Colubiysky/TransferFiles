@@ -29,7 +29,7 @@ namespace Server
                 // начинаем прослушивание
                 listenSocket.Listen(10);
 
-                Console.WriteLine("Server is running...");
+                //Console.WriteLine("Server is running...");
 
                 int bytes = 0;
                 const int bufferSize = 8192;
@@ -67,10 +67,24 @@ namespace Server
             }
             catch (Exception error)
             {
-                Console.WriteLine(error.ToString());
-                Console.ReadKey();
+                string path = Directory.GetCurrentDirectory() + "\\log.txt";
+                if(File.Exists(path))
+                {
+                    //using (var stream = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
+                    //{
+                        var writer = new StreamWriter(path);
+                        writer.Write(error.ToString());
+                        //File.AppendAllText(path, error.ToString());
+                    //}
+                }
+                else
+                {
+                    using(var stream = File.Create(path))
+                    {
+                        //File.Create(path);
+                    }
+                }
             }
-
         }
     }
 }

@@ -17,6 +17,9 @@ namespace TransferFiles
         public List<string> Online { get => Online_; } //This list contains ip addresses of online devices in network
         private List<string> Online_ = new List<string>();
 
+        public List<string> Pinged { get => Pinged_; }
+        private List<string> Pinged_ = new List<string>();
+
         int Alive_ = 0; //alive threads
         int Dead_ = 0;  //finished threads
 
@@ -80,20 +83,27 @@ namespace TransferFiles
 
         virtual public void DoPing()
         {
-            var IPList = CreateIPList();
-            countIPs_ = IPList.Count;
-
-            //Configurate ping
-            string data = "1";
-            byte[] buffer = Encoding.ASCII.GetBytes(data);
-            PingOptions options = new PingOptions(64, true);
-
-            for (int i =0; i < IPList.Count; i++) //every address will be pinged with different thread
+            try
             {
-                if (i != IPList.Count - 1)
-                    Threads(IPList[i], buffer, options, false); 
-                else
-                    Threads(IPList[i], buffer, options, true);
+                var IPList = CreateIPList();
+                countIPs_ = IPList.Count;
+
+                //Configurate ping
+                string data = "1";
+                byte[] buffer = Encoding.ASCII.GetBytes(data);
+                PingOptions options = new PingOptions(64, true);
+
+                for (int i = 0; i < IPList.Count; i++) //every address will be pinged with different thread
+                {
+                    if (i != IPList.Count - 1)
+                        Threads(IPList[i], buffer, options, false);
+                    else
+                        Threads(IPList[i], buffer, options, true);
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -124,8 +134,11 @@ namespace TransferFiles
                 ping.Send(dest, 100, buffer, opt); //knock knock
                 ping.Send(dest, 100, buffer, opt); //knock knock
                 pingReply = ping.Send(dest, 100, buffer, opt); //knock knock is someone here?
-                if (pingReply.Status != IPStatus.Unknown) //if we don't lost ping packet
+                //if (pingReply.Status != IPStatus.Unknown) //if we don't lost ping packet
+                //{
                     pinged_++;
+                    Pinged_.Add(dest.ToString());
+                //}
 
                 if (pingReply.Status.ToString() == "Success")
                     Online_.Add(pingReply.Address.ToString());
@@ -144,7 +157,7 @@ namespace TransferFiles
             int[] localAndDefaultIPs = NotIncludedIndeces();
 
             for (int i = 1; i < 256; i++)
-                if (i != localAndDefaultIPs[0] && i != localAndDefaultIPs[1])
+                if (i != localAndDefaultIPs[0] /*&& i != localAndDefaultIPs[1]*/)
                     IPList.Add(IPAddress.Parse(ThisMachine.DefaultGateway.ToString().Replace(".0.1", ".0." + i.ToString())));
 
             return IPList;

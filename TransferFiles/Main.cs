@@ -111,7 +111,8 @@ namespace TransferFiles
         private void DropFile_btn_Click(object sender, EventArgs e)
         {
             //client.Send(lst_Computers.SelectedItem.ToString());
-            client.Send("127.0.0.1");
+            //client.Send("127.0.0.1");
+            client.SendTCP(@"C:\Users\cola\Desktop\test.txt", "127.0.0.1", 1488);
         }
     }
 }

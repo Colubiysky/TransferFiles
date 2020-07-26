@@ -32,6 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.CheckOnline_btn = new System.Windows.Forms.Button();
             this.DropFile_btn = new System.Windows.Forms.Button();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lst_Computers
@@ -73,11 +74,21 @@
             this.DropFile_btn.UseVisualStyleBackColor = true;
             this.DropFile_btn.Click += new System.EventHandler(this.DropFile_btn_Click);
             // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(569, 43);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(50, 20);
+            this.lblStatus.TabIndex = 6;
+            this.lblStatus.Text = "label2";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(952, 506);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.DropFile_btn);
             this.Controls.Add(this.CheckOnline_btn);
             this.Controls.Add(this.label1);
@@ -97,6 +108,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button CheckOnline_btn;
         private System.Windows.Forms.Button DropFile_btn;
+        private System.Windows.Forms.Label lblStatus;
     }
 }
 

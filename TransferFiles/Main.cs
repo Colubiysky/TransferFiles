@@ -21,12 +21,6 @@ namespace TransferFiles
         {
             InitializeComponent();
             GetOnline();
-            //server = new Server();
-            //Thread t = new Thread(new ThreadStart(()=>{
-            //    server.Run();
-            //}));
-            //t.IsBackground = true;
-            //t.Start();
 
         }
         Client client = new Client();

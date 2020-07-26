@@ -70,7 +70,7 @@
             this.DropFile_btn.Name = "DropFile_btn";
             this.DropFile_btn.Size = new System.Drawing.Size(176, 82);
             this.DropFile_btn.TabIndex = 5;
-            this.DropFile_btn.Text = "Drop Test File";
+            this.DropFile_btn.Text = "Drop file";
             this.DropFile_btn.UseVisualStyleBackColor = true;
             this.DropFile_btn.Click += new System.EventHandler(this.DropFile_btn_Click);
             // 

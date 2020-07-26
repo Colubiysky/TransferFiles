@@ -14,13 +14,13 @@ using System.Windows.Forms;
 
 namespace ServerApp
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
         private const int BufferSize = 1024;
         public string Status = string.Empty;
         public Thread T = null;
 
-        public Form1()
+        public Main()
         {
             InitializeComponent();
         }

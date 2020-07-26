@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Timers;
-//using Server;
 using System.Collections.Immutable;
 
 namespace TransferFiles
@@ -30,8 +29,6 @@ namespace TransferFiles
             //t.Start();
 
         }
-
-        Server server;
         Client client = new Client();
 
         private List<string> Online;
@@ -107,7 +104,7 @@ namespace TransferFiles
             }
             catch(InvalidOperationException ex)
             {
-                
+                MessageBox.Show(ex.Message);
             }
         }
 

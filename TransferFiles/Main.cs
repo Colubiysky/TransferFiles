@@ -110,9 +110,15 @@ namespace TransferFiles
 
         private void DropFile_btn_Click(object sender, EventArgs e)
         {
-            //client.Send(lst_Computers.SelectedItem.ToString());
-            //client.Send("127.0.0.1");
-            client.SendTCP(@"C:\Users\cola\Desktop\test.txt", "127.0.0.1", 1488);
+            string SaveFileName = string.Empty;
+            SaveFileDialog DialogSave = new SaveFileDialog();
+            DialogSave.Filter = "All files (*.*)|*.*";
+            DialogSave.RestoreDirectory = true;
+            DialogSave.Title = "Select file...";
+            DialogSave.InitialDirectory = @"C:/";
+            if (DialogSave.ShowDialog() == DialogResult.OK)
+                SaveFileName = DialogSave.FileName;
+            client.SendTCP(SaveFileName, lst_Computers.SelectedItem.ToString(), 1488);
         }
     }
 }

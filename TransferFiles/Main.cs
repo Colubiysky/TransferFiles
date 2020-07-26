@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Timers;
-using Server;
+//using Server;
 using System.Collections.Immutable;
 
 namespace TransferFiles
@@ -22,12 +22,17 @@ namespace TransferFiles
         {
             InitializeComponent();
             GetOnline();
-            server = new Server.Server();
-            server.Run();
+            //server = new Server();
+            //Thread t = new Thread(new ThreadStart(()=>{
+            //    server.Run();
+            //}));
+            //t.IsBackground = true;
+            //t.Start();
+
         }
 
-        Server.Server server;
-        Client client;
+        Server server;
+        Client client = new Client();
 
         private List<string> Online;
 
@@ -108,7 +113,8 @@ namespace TransferFiles
 
         private void DropFile_btn_Click(object sender, EventArgs e)
         {
-            client.Send(lst_Computers.SelectedItem.ToString());
+            //client.Send(lst_Computers.SelectedItem.ToString());
+            client.Send("127.0.0.1");
         }
     }
 }

@@ -35,7 +35,7 @@ namespace ServerApp
         }
         public void StartReceiving()
         {
-            ReceiveTCP(1488);
+            ReceiveTCP(1572);
         }
 
         public void ReceiveTCP(int portN)

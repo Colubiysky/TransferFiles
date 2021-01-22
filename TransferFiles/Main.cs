@@ -112,7 +112,7 @@ namespace TransferFiles
             DialogSave.InitialDirectory = @"C:/";
             if (DialogSave.ShowDialog() == DialogResult.OK)
                 SaveFileName = DialogSave.FileName;
-            client.SendTCP(SaveFileName, lst_Computers.SelectedItem.ToString(), 1488);
+            client.SendTCP(SaveFileName, lst_Computers.SelectedItem.ToString(), 1572);
         }
     }
 }

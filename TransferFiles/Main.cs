@@ -51,6 +51,7 @@ namespace TransferFiles
             
             p.DoPing();
             SetTimer();
+            
         }
 
         private  void SetTimer() //for pereodical checking of online list
@@ -68,6 +69,7 @@ namespace TransferFiles
                 Invoke(new System.Action(() =>
                 {
                     Online = p.Online;
+                    Online.Add("127.0.0.1");
                     var idk = p.Pinged.ToArray();
                     Array.Sort(idk);
 
@@ -112,6 +114,7 @@ namespace TransferFiles
             DialogSave.InitialDirectory = @"C:/";
             if (DialogSave.ShowDialog() == DialogResult.OK)
                 SaveFileName = DialogSave.FileName;
+            //MessageBox.Show(Encoding.UTF8.GetBytes(SaveFileName).Length.ToString());
             client.SendTCP(SaveFileName, lst_Computers.SelectedItem.ToString(), 1572);
         }
     }

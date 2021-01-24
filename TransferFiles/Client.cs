@@ -16,9 +16,9 @@ namespace TransferFiles
         }
 
         public string SendingFilePath = string.Empty;
-        private const int BufferSize = 1024;
+        private const int BufferSize = 8192;
 
-        int port = 1488; // порт сервера
+        int port = 1572; //server port
 
         public void SendTCP(string Path, string IPA, Int32 PortN)
         {
@@ -31,7 +31,13 @@ namespace TransferFiles
                 netstream = client.GetStream();
                 FileStream Fs = new FileStream(Path, FileMode.Open, FileAccess.Read);
                 int NoOfPackets = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(Fs.Length) / Convert.ToDouble(BufferSize)));
-                int TotalLength = (int)Fs.Length, CurrentPacketLength/*, counter = 0*/;
+                int TotalLength = (int)Fs.Length, CurrentPacketLength;
+
+                //Send filename
+                string filename = new FileInfo(Path).Name; //gets filename
+                byte[] filenameBuf = Encoding.UTF8.GetBytes(filename);
+                netstream.Write(filenameBuf, 0, filenameBuf.Length);
+
                 for (int i = 0; i < NoOfPackets; i++)
                 {
                     if (TotalLength > BufferSize)
@@ -50,7 +56,7 @@ namespace TransferFiles
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Client");
             }
             finally
             {

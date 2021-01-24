@@ -16,7 +16,7 @@ namespace ServerApp
 {
     public partial class Main : Form
     {
-        private const int BufferSize = 1024;
+        private const int BufferSize = 8192;
         public string Status = string.Empty;
         public Thread T = null;
 
@@ -33,9 +33,84 @@ namespace ServerApp
             T.SetApartmentState(ApartmentState.STA);
             T.Start();
         }
-        public void StartReceiving()
+        private void StartReceiving()
         {
             ReceiveTCP(1572);
+        }
+
+        private void FileRecive()
+        {
+            //Создаем Listener на порт "по умолчанию"
+            TcpListener Listen = new TcpListener(1572);
+            //Начинаем прослушку
+            Listen.Start();
+            //и заведем заранее сокет
+            Socket ReceiveSocket;
+            while (true)
+            {
+                try
+                {
+                    string name;
+                    //Пришло сообщение
+                    ReceiveSocket = Listen.AcceptSocket();
+                    Byte[] Receive = new Byte[256];
+                    //Читать сообщение будем в поток
+                    using (MemoryStream MessageR = new MemoryStream())
+                    {
+
+                        //Количество считанных байт
+                        Int32 ReceivedBytes;
+                        Int32 Firest256Bytes = 0;
+                        String FilePath = "";
+                        do
+                        {//Собственно читаем
+                            ReceivedBytes = ReceiveSocket.Receive(Receive, Receive.Length, 0);
+                            //Разбираем первые 256 байт
+                            if (Firest256Bytes < 256)
+                            {
+                                Firest256Bytes += ReceivedBytes;
+                                Byte[] ToStr = Receive;
+                                //Учтем, что может возникнуть ситуация, когда они не могу передаться "сразу" все
+                                if (Firest256Bytes > 256)
+                                {
+                                    Int32 Start = Firest256Bytes - ReceivedBytes;
+                                    Int32 CountToGet = 256 - Start;
+                                    Firest256Bytes = 256;
+                                    //В случае если было принято >256 байт (двумя сообщениями к примеру)
+                                    //Остаток (до 256) записываем в "путь файла"
+                                    ToStr = Receive.Take(CountToGet).ToArray();
+                                    //А остальную часть - в будующий файл
+                                    Receive = Receive.Skip(CountToGet).ToArray();
+                                    MessageR.Write(Receive, 0, ReceivedBytes);
+                                }
+                                //Накапливаем имя файла
+                                FilePath += Encoding.Default.GetString(ToStr);
+                            }
+                            else
+
+                                //и записываем в поток
+                                MessageR.Write(Receive, 0, ReceivedBytes);
+                            //Читаем до тех пор, пока в очереди не останется данных
+                        } while (ReceivedBytes == Receive.Length);
+                        //Убираем лишние байты
+                        String resFilePath = FilePath.Substring(0, FilePath.IndexOf('\0'));
+                        MessageBox.Show(resFilePath);
+
+
+                        using (var File = new FileStream(resFilePath, FileMode.Create))
+                        {//Записываем в файл
+                            File.Write(MessageR.ToArray(), 0, MessageR.ToArray().Length);
+                        }//Уведомим пользователя
+                        //ChatBox.BeginInvoke(AcceptDelegate, new object[] { "Получено: " + resFilePath, ChatBox });
+                        name = resFilePath;
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+            }
         }
 
         public void ReceiveTCP(int portN)
@@ -61,13 +136,10 @@ namespace ServerApp
                 Status = string.Empty;
                 try
                 {
-
-
                     string message = "Accept the Incoming File ";
                     string caption = "Incoming Connection";
                     MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                     DialogResult result;
-
 
                     if (Listener.Pending())
                     {
@@ -78,12 +150,13 @@ namespace ServerApp
 
                         if (result == System.Windows.Forms.DialogResult.Yes)
                         {
-                            string SaveFileName = string.Empty;
+                            string SaveFileName = string.Empty /*UTF8Encoding.UTF8.GetString(filenameBuf)*/ /*fname*/;
                             SaveFileDialog DialogSave = new SaveFileDialog();
                             DialogSave.Filter = "All files (*.*)|*.*";
                             DialogSave.RestoreDirectory = true;
                             DialogSave.Title = "Where do you want to save the file?";
                             DialogSave.InitialDirectory = @"C:/";
+                            DialogSave.FileName = SaveFileName;
                             if (DialogSave.ShowDialog() == DialogResult.OK)
                                 SaveFileName = DialogSave.FileName;
                             if (SaveFileName != string.Empty)
@@ -99,14 +172,14 @@ namespace ServerApp
                             }
                             netstream.Close();
                             client.Close();
-
+                            MessageBox.Show("Successfully recieved!", "server");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
-                    //netstream.Close();
+                    MessageBox.Show(ex.Message, "server");
+                    netstream.Close();
                 }
             }
         }
